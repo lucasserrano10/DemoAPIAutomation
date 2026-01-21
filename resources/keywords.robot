@@ -6,11 +6,11 @@ Ler Cenários Ativos
     ${rows}=    Read Worksheet As Table    header=True
     ${ativos}=    Create List
     FOR    ${row}    IN    @{rows}
-        IF    '${row}[Executar]' == 'YES'
-            Append To List    ${ativos}    ${row}[Cenario]
+        IF    '${row}[EXECUTAR]' == 'YES'
+            Append To List    ${ativos}    ${row}[CENARIO]
         END
     END
-    [Return]    ${ativos}
+    RETURN    ${ativos}
 
 Executar Cenario
     [Arguments]    ${cenario}
