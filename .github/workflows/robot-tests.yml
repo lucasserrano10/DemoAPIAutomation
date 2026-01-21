@@ -1,0 +1,33 @@
+name: Robot Framework Tests
+
+on:
+  schedule:
+    - cron: '0 5 * * *' # 05:00 da manhã (UTC)
+  workflow_dispatch:
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: |
+          pip install -r requirements.txt
+
+      - name: Executar testes Robot
+        run: |
+          robot -d results tests/
+
+      - name: Publicar relatório
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-report
+          path: results
