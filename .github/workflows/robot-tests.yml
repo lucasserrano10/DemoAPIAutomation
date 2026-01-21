@@ -40,7 +40,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "Relatório de Testes API: ${{ job.status }}"
-          to: madsbarreto@ibm.com
+          to: madsbarreto@ibm.com, lucas.serrano1@ibm.com, wendel.henrique.atico@ibm.com
           from: GitHub Actions Automation
           body: |
             Os testes do Robot Framework terminaram com status: ${{ job.status }}.
