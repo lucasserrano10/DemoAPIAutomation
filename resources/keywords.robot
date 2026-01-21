@@ -1,31 +1,20 @@
+*** Settings ***
+Library    Collections
+
 *** Keywords ***
-Abrir Planilha
-    Open Workbook    data/cenarios_demo.xlsx
-
-Ler Cenários Ativos
-    ${rows}=    Read Worksheet As Table    header=True
-    ${ativos}=    Create List
-    FOR    ${row}    IN    @{rows}
-        IF    '${row}[EXECUTAR]' == 'YES'
-            Append To List    ${ativos}    ${row}[CENARIO]
-        END
+Ler Cenarios Do Excel
+    # Carrega o workbook
+    ${wb}=    Evaluate    __import__('openpyxl').load_workbook('data/cenarios_demo.xlsx')    modules=openpyxl
+    
+    # CORREÇÃO: Acessa a planilha ativa diretamente
+    ${sheet}=    Set Variable    ${wb.active}
+    
+    ${rows}=    Create List
+    
+    # Sintaxe moderna de FOR (Robot 3.1+)
+    FOR    ${row}    IN    @{sheet.iter_rows(min_row=2, values_only=True)}
+        ${dict_row}=    Create Dictionary    CENARIO=${row}[0]    EXECUTAR=${row}[1]
+        Append To List    ${rows}    ${dict_row}
     END
-    RETURN    ${ativos}
-
-Executar Cenario
-    [Arguments]    ${cenario}
-    IF    '${cenario}' == 'HealthCheck API'
-        Health Check API
-    ELSE IF    '${cenario}' == 'Orders API'
-        Orders API
-    END
-
-Health Check API
-    Create Session    api    https://httpbin.org
-    ${resp}=    GET    api    /status/200
-    Should Be Equal As Integers    ${resp.status_code}    200
-
-Orders API
-    Create Session    api    https://httpbin.org
-    ${resp}=    GET    api    /status/200
-    Should Be Equal As Integers    ${resp.status_code}    200
+    
+    RETURN      ${rows}
